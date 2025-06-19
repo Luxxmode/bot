@@ -734,6 +734,9 @@ TRM_HELP: str = (
     "    * The script reads the path from 'path.txt' to locate the operation file.\n"
     "    * Bot will display progress in the terminal.\n"
     "    * All accounts will be rotated automatically to perform the operations.\n\n"
+    + Terminal.cyan("python main.py ") + Terminal.yellow("--do-linklist=FILE") + "\n"
+    "    * Create an operation JSON from tweet links listed in FILE.\n"
+    "    * Each line in FILE should contain a tweet URL.\n\n"
 
     + Terminal.cyan("-------------------------------") + "\n"
 )
