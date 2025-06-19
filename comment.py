@@ -58,7 +58,7 @@ def do_comment_by_account(account: dict, operation: OperationInfo, driver) -> bo
     except Exception as e:
         Terminal.red(f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {account['name']}\n * Account Username : {account['username']}", show=True)
         Terminal.red(f"Errors : {e}", show=True)
-        return True
+        return False
 
 
 

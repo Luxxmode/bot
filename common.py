@@ -130,7 +130,7 @@ class XTwitterAccount:
         # Set default values
         defaults = {
             "x_followers_count": 0,
-            "x_firends_count": 0,
+            "x_friends_count": 0,
             "x_media_count": 0,
             "x_statuses_count": 0,
             "x_verified": False,
@@ -564,7 +564,7 @@ def test_and_save_account_by_info(account_info: dict) -> bool:
             if "followers_count" in legacy:
                 account_doc["x_followers_count"] = legacy["followers_count"]
             if "friends_count" in legacy:
-                account_doc["x_firends_count"] = legacy["friends_count"]
+                account_doc["x_friends_count"] = legacy["friends_count"]
             if "media_count" in legacy:
                 account_doc["x_media_count"] = legacy["media_count"]
 
