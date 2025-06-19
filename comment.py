@@ -58,7 +58,7 @@ def do_comment_by_account(account: dict, operation: OperationInfo, driver) -> bo
     except Exception as e:
         Terminal.red(f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {account['name']}\n * Account Username : {account['username']}", show=True)
         Terminal.red(f"Errors : {e}", show=True)
-        return True
+        return False
 
 
 
@@ -74,6 +74,9 @@ def do_comment_by_accounts(ac:XTwitterAccount, driver) -> None:
         if not os.path.isfile(operation_file_path):
             Terminal.red(f"Operation file not exists at {operation_file_path}")
             quit()
+        comments_path = os.path.join(base_dir, "comments_list.json")
+        if os.path.isfile(comments_path):
+            FileSystem.fill_comments_randomly(operation_file_path, comments_path)
         operations:list[OperationInfo] = FileSystem.get_media_posts_operations_from_file(operation_file_path)
         if not operations or not isinstance(operations , list) or len(operations) <= 0:
             Terminal.red("There is not operation in the operation file", show=True)
