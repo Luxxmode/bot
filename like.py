@@ -1,31 +1,16 @@
-from common import OperationInfo
-from common import XTwitterAccount
-from common import Terminal
-from common import Utils
-from common import GlobalSettings
-from common import FileSystem
-from twitter.account import Account
-from common import get_session_of_account
-from common import get_session_of_account
-from common import random_like_delay
+from common import (
+    OperationInfo,
+    XTwitterAccount,
+    Terminal,
+    Utils,
+    GlobalSettings,
+    FileSystem,
+    get_session_of_account,
+    random_like_delay,
+)
 from reply import like_comments_under_tweet, create_driver_with_cookies
 import os
-from common import GlobalSettings, XTwitterAccount
-import time, datetime
 
-# right at the top of your do_comment_by_account() or do_like_by_account():
-def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
-
-        # — DAILY RESET & DEBUG —
-        # — DAILY RESET & DEBUG —
-    account = XTwitterAccount.get_by_username(account["username"])
-    print(f"[DEBUG] Account after reset: {account}")
-    print(f"[DEBUG]   today_likes    = {account.get('today_likes')}")
-    print(f"[DEBUG]   last_reset_date= {account.get('last_reset_date')}")
-
-    settings = GlobalSettings.get_settings()
-    print(f"[DEBUG] Global settings: {settings}")
-    # — END DEBUG —
 
 
 
@@ -42,9 +27,13 @@ def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
         Terminal.cyan(f"doing like to post {post_id } in comments", show=True)
         settings: dict = GlobalSettings.get_settings()
         try:
-            if account["today_likes"] >= settings["max_likes_per_day"]:
-                    Terminal.yellow(f"Account {account['username']} has reached the maximum likes for today", show=True)
-                    return True
+            max_likes_for_acc = account.get("max_likes_per_day", settings.get("max_likes_per_day"))
+            if account.get("today_likes", 0) >= max_likes_for_acc:
+                Terminal.yellow(
+                    f"Account {account['username']} has reached the maximum likes for today",
+                    show=True,
+                )
+                return True
 
 
 
@@ -58,10 +47,10 @@ def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
                     comments_to_like=operation.comments_to_like,
                     max_scrolls=account.get("max_likes_per_day", 20)  # Default to 10 if not specified
                 )
-                if(res):
-                    GlobalSettings.update_settings({
-                        "today_likes": settings.get("today_likes") + 1,
-                    })
+                if res:
+                    GlobalSettings.update_settings(
+                        {"today_likes": settings.get("today_likes", 0) + res}
+                    )
                     XTwitterAccount.update(
                         account_id=account.get("_id"),
                         updates={
