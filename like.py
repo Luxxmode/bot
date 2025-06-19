@@ -67,7 +67,7 @@ def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
 
         Terminal.green(f"Operation Completed By Account Successfully\n * Account Name {account['name']}\n * Account Username : {account['username']} \n * Post Id : {post_id}", show=True)
     except Exception as e:
-        Terminal.red(f"Failed to dowing operatin for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {account['name']}\n * Account Username : {account['username']}", show=True)
+        Terminal.red(f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {account['name']}\n * Account Username : {account['username']}", show=True)
         Terminal.red(f"Errors : {e}", show=True)
         return False
 
