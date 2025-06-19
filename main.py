@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # Ensure settings exist
     GlobalSettings.get_settings()
 
-    parser = ArgumentParser(description="XTwiiter Bot V1", add_help=False)
+    parser = ArgumentParser(description="XTwitter Bot V1", add_help=False)
 
     parser.add_argument("--add-account" , action="store_true")
     parser.add_argument("--del-account")

@@ -421,6 +421,50 @@ class FileSystem:
 
         return operations
 
+    @staticmethod
+    def fill_comments_randomly(operation_file: str, comments_file: str, output_file: str | None = None) -> None:
+        """Populate each operation's comment_to_make field with a random comment.
+
+        Parameters
+        ----------
+        operation_file : str
+            Path to the operations JSON file.
+        comments_file : str
+            Path to the JSON file containing a list of comments.
+        output_file : str | None, optional
+            If provided, the updated operations are written to this path.
+            Otherwise ``operation_file`` is overwritten.
+        """
+
+        if not os.path.isfile(operation_file):
+            raise InvalidOperationFilePath(f"Invalid [Operation File] Path '{operation_file}' , not exists")
+        if not os.path.isfile(comments_file):
+            raise InvalidOperationFilePath(f"Invalid [Comments File] Path '{comments_file}' , not exists")
+
+        try:
+            with open(comments_file, "r", encoding="utf-8") as f:
+                comments = json.load(f)
+        except json.JSONDecodeError:
+            raise InvalidOperationFile(f"Invalid Json [Comments File] Path '{comments_file}'")
+
+        if not isinstance(comments, list) or len(comments) == 0:
+            raise InvalidOperationFile("Comments file must contain a non-empty list")
+
+        try:
+            with open(operation_file, "r", encoding="utf-8") as f:
+                operations = json.load(f)
+        except json.JSONDecodeError:
+            raise InvalidOperationFile(f"Invalid Json [Operation File] Path '{operation_file}'")
+
+        if isinstance(operations, list):
+            for op in operations:
+                if isinstance(op, dict):
+                    op["comment_to_make"] = random.choice(comments).strip()
+
+        target = output_file if output_file else operation_file
+        with open(target, "w", encoding="utf-8") as f:
+            json.dump(operations, f, indent=4)
+
 # ====================================================================================================
 # utils
 
