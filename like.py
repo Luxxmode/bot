@@ -56,7 +56,7 @@ def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
                     driver=driver,
                     tweet_url=operation.media_post_link,
                     comments_to_like=operation.comments_to_like,
-                    max_scrolls=account.get("max_likes_per_day", 20)  # Default to 10 if not specified
+                    max_scrolls=account.get("max_likes_per_day", 20)  # Default to 20 if not specified
                 )
                 if(res):
                     GlobalSettings.update_settings({
