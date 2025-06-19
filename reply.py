@@ -76,11 +76,12 @@ def send_reply(driver, reply_link, reply_text):
 
         try:
             reply_box = WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.XPATH, '//div[@data-testid="tweetTextarea_0"]'))
+                EC.element_to_be_clickable((By.XPATH,
+                    '//div[@data-testid="tweetTextarea_0" or @aria-label="Post text"]'))
             )
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", reply_box)
             time.sleep(1.5)
-            reply_box.click()
+            driver.execute_script("arguments[0].click();", reply_box)
             time.sleep(1.5)
             reply_box.send_keys(strip_non_bmp(reply_text))
         except Exception as e:
