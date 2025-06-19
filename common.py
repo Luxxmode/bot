@@ -17,9 +17,14 @@ load_dotenv("./.env", override=True)
 # pip packages
 
 import colorama
-from  twitter.account import Account
-from twitter.account import Client
-from twitter.scraper import Scraper
+try:
+    from twitter.account import Account
+    from twitter.account import Client
+    from twitter.scraper import Scraper
+except Exception:  # pragma: no cover - optional dependency
+    Account = typing.Any  # type: ignore
+    Client = typing.Any   # type: ignore
+    Scraper = typing.Any  # type: ignore
 import requests
 
 

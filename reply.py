@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import (
         StaleElementReferenceException,
         NoSuchElementException,
@@ -55,17 +57,16 @@ def send_reply(driver, reply_link, reply_text):
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
         time.sleep(5)
 
+        body = driver.find_element(By.TAG_NAME, "body")
         for _ in range(5):
-            driver.execute_script("window.scrollBy(0, 300);")
+            body.send_keys(Keys.PAGE_DOWN)
             time.sleep(1.5)
 
         try:
             reply_btn = WebDriverWait(driver, 20).until(
                 EC.element_to_be_clickable((By.XPATH, '//div[@data-testid="reply"] | //button[@data-testid="reply"]'))
             )
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", reply_btn)
-            time.sleep(2)
-            driver.execute_script("arguments[0].click();", reply_btn)
+            ActionChains(driver).move_to_element(reply_btn).pause(2).click().perform()
             print("✅ Reply button clicked")
         except Exception as e:
             print("❌ Couldn't click reply button:", str(e))
@@ -79,11 +80,7 @@ def send_reply(driver, reply_link, reply_text):
                 EC.element_to_be_clickable((By.XPATH,
                     '//div[@data-testid="tweetTextarea_0" or @aria-label="Post text"]'))
             )
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", reply_box)
-            time.sleep(1.5)
-            driver.execute_script("arguments[0].click();", reply_box)
-            time.sleep(1.5)
-            reply_box.send_keys(strip_non_bmp(reply_text))
+            ActionChains(driver).move_to_element(reply_box).click().pause(1).send_keys(strip_non_bmp(reply_text)).perform()
         except Exception as e:
             print("❌ Failed to type reply:", str(e))
             driver.save_screenshot("reply_typing_fail.png")
@@ -95,9 +92,7 @@ def send_reply(driver, reply_link, reply_text):
             send_btn = WebDriverWait(driver, 20).until(
                 EC.element_to_be_clickable((By.XPATH, '//div[@data-testid="tweetButtonInline"] | //button[@data-testid="tweetButton"]'))
             )
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", send_btn)
-            time.sleep(1.5)
-            send_btn.click()
+            ActionChains(driver).move_to_element(send_btn).pause(1.5).click().perform()
             print("✅ Reply sent successfully!")
             return True
         except Exception as e:
