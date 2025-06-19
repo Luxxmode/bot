@@ -15,6 +15,10 @@ import sys
 from common import get_session_of_account
 from common import get_session_of_account
 from reply import create_driver_with_cookies
+from common import Utils
+import json
+import os
+import time
 
 if __name__ == "__main__":
     if len(sys.argv) <= 1 or sys.argv[1].lower() in ["--h", "-h", "--help", "-help"]:
@@ -40,6 +44,7 @@ if __name__ == "__main__":
     parser.add_argument("--setting" , action="store_true")
 
     parser.add_argument("--do-operation" , action="store_true")
+    parser.add_argument("--do-linklist")
 
     args = parser.parse_args()
 
@@ -110,6 +115,43 @@ Account Email: {acc['email']}
 Account Password: {acc['password']}
 {Terminal.yellow("-----------------------------")}
 """)
+    elif args.do_linklist:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        link_file = args.do_linklist
+        link_path = link_file if os.path.isabs(link_file) else os.path.join(base_dir, link_file)
+        if not os.path.isfile(link_path):
+            Terminal.red(f"Links file not exists at {link_path}", show=True)
+            quit()
+        with open(link_path, "r", encoding="utf-8") as f:
+            links = [ln.strip() for ln in f if ln.strip()]
+        operations = []
+        for link in links:
+            if not Validator.is_twitter_post_status_link(link):
+                Terminal.red(f"Invalid link skipped: {link}", show=True)
+                continue
+            rest_id = Utils.extract_post_rest_id_from_post_link(link)
+            if not rest_id:
+                Terminal.red(f"Could not extract post id from {link}", show=True)
+                continue
+            username = link.split("/status")[0].split("/")[-1]
+            operations.append({
+                "rest_id": str(rest_id),
+                "username": username,
+                "media_post_link": link,
+                "comment_to_make": "that is perfect! \ud83c\udf39\u2764",
+                "comments_to_like": 12
+            })
+        if len(operations) == 0:
+            Terminal.red("No valid links to process", show=True)
+            quit()
+        unique_name = f"operation_{int(time.time())}.json"
+        output_path = os.path.join(base_dir, unique_name)
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(operations, f, indent=4)
+        with open(os.path.join(base_dir, "path.txt"), "w", encoding="utf-8") as f:
+            f.write(unique_name)
+        Terminal.green(f"Operation file created at {unique_name}", show=True)
+        quit()
     elif args.do_operation:
         accs:list[dict] = XTwitterAccount.get_all()
         if not isinstance(accs , list) or len(accs) <= 0:
