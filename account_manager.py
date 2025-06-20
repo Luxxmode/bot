@@ -37,32 +37,33 @@ def selenium_login_and_save_cookies(username, password):
     driver = webdriver.Chrome(options=options)
     driver.get("https://twitter.com/login")
     time.sleep(4)
+    # Username/email input
     user_box = driver.find_element(By.NAME, "text")
     user_box.send_keys(username)
     user_box.send_keys(Keys.RETURN)
     time.sleep(2)
+    # Password input
     pwd_box = driver.find_element(By.NAME, "password")
     pwd_box.send_keys(password)
     pwd_box.send_keys(Keys.RETURN)
-    print(
-        Fore.YELLOW +
-        "\U0001F514 Waiting 10 seconds... Please solve any popups, complete verification, and wait for home timeline to load!" +
-        Style.RESET_ALL
-    )
+    print(Fore.YELLOW + "🔔 Waiting 10 seconds... Please solve any popups, complete verification, and wait for home timeline to load!" + Style.RESET_ALL)
     time.sleep(10)
+    # Now refresh and wait to be sure session cookies are complete
     driver.refresh()
-    print(Fore.CYAN + "\U0001F501 Refreshed page. Waiting a few more seconds for all session cookies..." + Style.RESET_ALL)
+    print(Fore.CYAN + "🔁 Refreshed page. Waiting a few more seconds for all session cookies..." + Style.RESET_ALL)
     time.sleep(4)
+    # Print cookies for debug
     cookies = driver.get_cookies()
     print(Fore.MAGENTA + "\n--- Session cookies ---")
     for c in cookies:
         print(f"{c['name']}: {c['value']}")
     print("--- End cookies ---\n" + Style.RESET_ALL)
+    # Check login status
     if "login" in driver.current_url or "Log in" in driver.title:
-        print(Fore.RED + "\u274C Login failed! Still on login page." + Style.RESET_ALL)
+        print(Fore.RED + "❌ Login failed! Still on login page." + Style.RESET_ALL)
         driver.quit()
         return None
-    print(Fore.GREEN + "\u2705 Looks logged in! Saving cookies..." + Style.RESET_ALL)
+    print(Fore.GREEN + "✅ Looks logged in! Saving cookies..." + Style.RESET_ALL)
     driver.quit()
     return cookies
 
