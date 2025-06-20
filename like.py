@@ -57,17 +57,36 @@ def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
                             "today_likes": XTwitterAccount.get_by_username(account.get("username")).get("today_likes") + res,
                         }
                     )
-                    Terminal.green(f"Comment Liked Successfully ! :\n * Post Link : {operation.media_post_link} \n * Account Name: {account.get('name')}", show=True)
+                    acc_name = account.get('name') or account.get('username')
+                    Terminal.green(
+                        f"Comment Liked Successfully ! :\n * Post Link : {operation.media_post_link} \n * Account Name: {acc_name}",
+                        show=True,
+                    )
                     random_like_delay()
                 else:
-                    print(f"Failed to like comment on post {operation.media_post_link} using account {account.get('name')}")
+                    acc_name = account.get('name') or account.get('username')
+                    print(
+                        f"Failed to like comment on post {operation.media_post_link} using account {acc_name}"
+                    )
         except Exception as e:
-            Terminal.red(f"Error While Liking The Comment ! \n * Post Link : {operation.media_post_link} \n * Account Name: {account.get('name')}", show=True)
+            acc_name = account.get('name') or account.get('username')
+            Terminal.red(
+                f"Error While Liking The Comment ! \n * Post Link : {operation.media_post_link} \n * Account Name: {acc_name}",
+                show=True,
+            )
             Terminal.red(f"Error : {e}", show=True)
 
-        Terminal.green(f"Operation Completed By Account Successfully\n * Account Name {account['name']}\n * Account Username : {account['username']} \n * Post Id : {post_id}", show=True)
+        acc_name = account.get('name') or account.get('username')
+        Terminal.green(
+            f"Operation Completed By Account Successfully\n * Account Name {acc_name}\n * Account Username : {account['username']} \n * Post Id : {post_id}",
+            show=True,
+        )
     except Exception as e:
-        Terminal.red(f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {account['name']}\n * Account Username : {account['username']}", show=True)
+        acc_name = account.get('name') or account.get('username')
+        Terminal.red(
+            f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {acc_name}\n * Account Username : {account['username']}",
+            show=True,
+        )
         Terminal.red(f"Errors : {e}", show=True)
         return False
 

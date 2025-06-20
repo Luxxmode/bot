@@ -25,7 +25,11 @@ def do_comment_by_account(account: dict, operation: OperationInfo, driver) -> bo
         settings: dict = GlobalSettings.get_settings()
         try:
             if (account.get("today_comments") >= account.get("max_comments_per_day")):
-                Terminal.yellow(f"Account {account.get('name')} has reached the maximum comments for today", show=True)
+                acc_name = account.get('name') or account.get('username')
+                Terminal.yellow(
+                    f"Account {acc_name} has reached the maximum comments for today",
+                    show=True,
+                )
             elif settings.get("today_comments") >= settings.get("max_comments_per_day"):
                 Terminal.yellow(f"Global Settings has reached the maximum comments for today", show=True)
             else:
@@ -44,18 +48,37 @@ def do_comment_by_account(account: dict, operation: OperationInfo, driver) -> bo
                             "today_comments": XTwitterAccount.get_by_username(account.get("username")).get("today_comments") + 1,
                         }
                     )
-                    Terminal.green(f"Comment Replied Successfully ! :\n * Post Link : {operation.media_post_link} \n * Account Name: {account.get('name')}", show=True)
+                    acc_name = account.get('name') or account.get('username')
+                    Terminal.green(
+                        f"Comment Replied Successfully ! :\n * Post Link : {operation.media_post_link} \n * Account Name: {acc_name}",
+                        show=True,
+                    )
                     random_comment_delay()
 
                 else:
-                    print(f"Failed to reply comment on post {operation.media_post_link} using account {account.get('name')}")
+                    acc_name = account.get('name') or account.get('username')
+                    print(
+                        f"Failed to reply comment on post {operation.media_post_link} using account {acc_name}"
+                    )
         except Exception as e:
-            Terminal.red(f"Error While Repling The Comment ! \n * Post Link : {operation.media_post_link} \n * Account Name: {account.get('name')}", show=True)
+            acc_name = account.get('name') or account.get('username')
+            Terminal.red(
+                f"Error While Repling The Comment ! \n * Post Link : {operation.media_post_link} \n * Account Name: {acc_name}",
+                show=True,
+            )
             Terminal.red(f"Error : {e}", show=True)
 
-        Terminal.green(f"Operation Completed By Account Successfully\n * Account Name {account['name']}\n * Account Username : {account['username']} \n * Post Id : {post_id}", show=True)
+        acc_name = account.get('name') or account.get('username')
+        Terminal.green(
+            f"Operation Completed By Account Successfully\n * Account Name {acc_name}\n * Account Username : {account['username']} \n * Post Id : {post_id}",
+            show=True,
+        )
     except Exception as e:
-        Terminal.red(f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {account['name']}\n * Account Username : {account['username']}", show=True)
+        acc_name = account.get('name') or account.get('username')
+        Terminal.red(
+            f"Failed to doing operation for post :\n * Post Link : {operation.media_post_link}\n * Account Name : {acc_name}\n * Account Username : {account['username']}",
+            show=True,
+        )
         Terminal.red(f"Errors : {e}", show=True)
         return False
 
