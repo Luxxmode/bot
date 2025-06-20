@@ -36,7 +36,8 @@ MONGO_URI = os.environ.get("MONGO_URI")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 ACCOUNTS_COLLECTION = os.getenv("ACCOUNTS_COLLECTION")
 SETTINGS_COLLECTION = os.getenv("SETTINGS_COLLECTION")
-BACKEND_URL = "https://x-backend-i606.onrender.com"
+# Allow overriding the backend login URL via environment variable
+BACKEND_URL = os.getenv("BACKEND_URL", "https://x-backend-i606.onrender.com")
 # Initialize MongoDB
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client[DATABASE_NAME]
