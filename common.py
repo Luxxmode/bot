@@ -13,6 +13,9 @@ from bson import ObjectId
 from dotenv import load_dotenv
 load_dotenv("./.env", override=True)
 
+# Prevent pytest from collecting tests from this module
+__test__ = False
+
 # ========================================================================================================================
 # pip packages
 
@@ -530,6 +533,14 @@ def test_and_save_account_by_info(account_info: dict) -> bool:
             return
 
         Terminal.cyan(f"Trying to Test Account {account_info['username']}", show=True)
+
+        # Ensure the login backend is reachable before attempting the request
+        try:
+            requests.head(BACKEND_URL, timeout=5).raise_for_status()
+        except Exception as e:
+            Terminal.red(f"Unable to reach backend {BACKEND_URL}", show=True)
+            Terminal.red(f"Error: {e}", show=True)
+            return False
 
         t_acc: Account = None
         t_scp: Scraper = None
