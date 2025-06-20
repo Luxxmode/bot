@@ -109,12 +109,23 @@ def do_like_by_accounts(ac:XTwitterAccount, driver) -> None:
             Terminal.red("Probably The Format Of File is not correct", show=True)
             quit()    
         Terminal.cyan(f"{len(operations)} Operations Found ...", show=True)
-        session=get_session_of_account(account=ac)
-        ct = session.cookies.get("ct0")
-        auth_token = session.cookies.get("auth_token")
-        driver = create_driver_with_cookies(cookies_dict={"ct0": ct, "auth_token": auth_token,})
+        session = get_session_of_account(account=ac)
+        ct = session.cookies.get("ct0") if session else None
+        auth_token = session.cookies.get("auth_token") if session else None
+
+        if not ct or not auth_token:
+            Terminal.red(
+                f"Account {ac.get('username')} is missing required cookies; skipping like operations",
+                show=True,
+            )
+            return
+
+        driver = create_driver_with_cookies({"ct0": ct, "auth_token": auth_token})
         if not driver:
-            Terminal.red(f"Failed to create driver with cookies for account {ac.get('username')}", show=True)
+            Terminal.red(
+                f"Failed to create driver with cookies for account {ac.get('username')}",
+                show=True,
+            )
             return
         for op in operations:
             if (op.comments_to_like != 0 and op.media_post_link):

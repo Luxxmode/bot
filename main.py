@@ -117,17 +117,32 @@ Account Password: {acc.get('password')}
             Terminal.red(f"Accounts List is Empty For Doing Operation", show=True)
             quit()
         for ac in accs:
-            session=get_session_of_account(account=ac)
-            ct = session.cookies.get("ct0")
-            auth_token = session.cookies.get("auth_token")
-            driver = create_driver_with_cookies(cookies_dict={"ct0": ct, "auth_token": auth_token,})
-            if not driver:
-                Terminal.red(f"Failed to create driver with cookies for account {ac.get('username')}", show=True)
+            session = get_session_of_account(account=ac)
+            ct = session.cookies.get("ct0") if session else None
+            auth_token = session.cookies.get("auth_token") if session else None
+
+            if not ct or not auth_token:
+                Terminal.red(
+                    f"Account {ac.get('username')} is missing required cookies; skipping",
+                    show=True,
+                )
                 continue
-            Terminal.cyan(f"Doing Operation using account {ac.get('username')} ...", show=True)
-            do_comment_by_accounts(ac,driver=driver)  
+
+            driver = create_driver_with_cookies({"ct0": ct, "auth_token": auth_token})
+            if not driver:
+                Terminal.red(
+                    f"Failed to create driver with cookies for account {ac.get('username')}",
+                    show=True,
+                )
+                continue
+
+            Terminal.cyan(
+                f"Doing Operation using account {ac.get('username')} ...",
+                show=True,
+            )
+            do_comment_by_accounts(ac, driver=driver)
             do_like_by_accounts(ac, driver=driver)
             driver.quit()
-        Terminal.cyan("All Operations Completed !", show=True)        
+        Terminal.cyan("All Operations Completed !", show=True)
         Terminal.green("Operation Completed !", show=True)
 
