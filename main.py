@@ -100,14 +100,17 @@ if __name__ == "__main__":
         
         Terminal.cyan("Listing Accounts ....", show=True)
         for acc in accs:
-            print(f"""
+            acc_name = acc.get('name') or acc.get('username')
+            print(
+                f"""
 {Terminal.yellow("-----------------------------")}
-Account Name: {acc['name']}
-Account Username: {acc['username']}
-Account Email: {acc['email']}
-Account Password: {acc['password']}
+Account Name: {acc_name}
+Account Username: {acc.get('username')}
+Account Email: {acc.get('email')}
+Account Password: {acc.get('password')}
 {Terminal.yellow("-----------------------------")}
-""")
+"""
+            )
     elif args.do_operation:
         accs:list[dict] = XTwitterAccount.get_all()
         if not isinstance(accs , list) or len(accs) <= 0:
