@@ -13,6 +13,9 @@ from bson import ObjectId
 from dotenv import load_dotenv
 load_dotenv("./.env", override=True)
 
+# Prevent pytest from collecting tests from this module
+__test__ = False
+
 # ========================================================================================================================
 # pip packages
 
@@ -33,7 +36,8 @@ MONGO_URI = os.environ.get("MONGO_URI")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 ACCOUNTS_COLLECTION = os.getenv("ACCOUNTS_COLLECTION")
 SETTINGS_COLLECTION = os.getenv("SETTINGS_COLLECTION")
-BACKEND_URL = "https://x-backend-i606.onrender.com"
+# Allow overriding the backend login URL via environment variable
+BACKEND_URL = os.getenv("BACKEND_URL", "https://x-backend-i606.onrender.com")
 # Initialize MongoDB
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client[DATABASE_NAME]
@@ -530,6 +534,14 @@ def test_and_save_account_by_info(account_info: dict) -> bool:
             return
 
         Terminal.cyan(f"Trying to Test Account {account_info['username']}", show=True)
+
+        # Ensure the login backend is reachable before attempting the request
+        try:
+            requests.head(BACKEND_URL, timeout=5).raise_for_status()
+        except Exception as e:
+            Terminal.red(f"Unable to reach backend {BACKEND_URL}", show=True)
+            Terminal.red(f"Error: {e}", show=True)
+            return False
 
         t_acc: Account = None
         t_scp: Scraper = None
