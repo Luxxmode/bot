@@ -4,7 +4,6 @@ from common import Terminal
 from common import Utils
 from common import GlobalSettings
 from common import FileSystem
-from twitter.account import Account
 
 from common import random_comment_delay
 from reply import send_reply
@@ -40,7 +39,7 @@ def do_comment_by_account(account: dict, operation: OperationInfo, driver) -> bo
                         "today_comments": settings.get("today_comments") + 1,
                     })
                     XTwitterAccount.update(
-                        account_id=account.get("_id"),
+                        account_id=account.get("username"),
                         updates={
                             "today_comments": XTwitterAccount.get_by_username(account.get("username")).get("today_comments") + 1,
                         }

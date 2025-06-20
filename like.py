@@ -52,7 +52,7 @@ def do_like_by_account(account: dict, operation: OperationInfo, driver) -> bool:
                         {"today_likes": settings.get("today_likes", 0) + res}
                     )
                     XTwitterAccount.update(
-                        account_id=account.get("_id"),
+                        account_id=account.get("username"),
                         updates={
                             "today_likes": XTwitterAccount.get_by_username(account.get("username")).get("today_likes") + res,
                         }

@@ -5,14 +5,12 @@ from common import GlobalSettings
 from common import TRM_HELP
 from common import ask_account_info
 from common import test_and_save_account_by_info
-from common import accounts_collection
 from common import Validator
 from common import FileSystem
 from comment import do_comment_by_accounts
 from like import do_like_by_accounts
 from argparse import ArgumentParser
 import sys
-from common import get_session_of_account
 from common import get_session_of_account
 from reply import create_driver_with_cookies
 
@@ -48,7 +46,7 @@ if __name__ == "__main__":
         test_and_save_account_by_info(acc_info)
         quit()
     elif args.del_account:
-        if accounts_collection.count_documents({"username": str(args.del_account).strip()}) > 0:
+        if XTwitterAccount.get_by_username(str(args.del_account).strip()):
             result = XTwitterAccount.delete_by_username(str(args.del_account))
             if result:
                 Terminal.green(f"Account {args.del_account} Deleted Successfully!", show=True)
