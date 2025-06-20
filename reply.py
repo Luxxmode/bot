@@ -17,6 +17,19 @@ def strip_non_bmp(text):
 
 # ===== Function: Setup driver and set cookies once =====
 def create_driver_with_cookies(cookies_dict):
+    """Create a Selenium driver preloaded with auth cookies.
+
+    Parameters
+    ----------
+    cookies_dict : dict
+        Mapping of cookie names to values. Values must be non-empty.
+    """
+    # Validate cookie values before launching the browser so tests can
+    # exercise this function without requiring a real driver.
+    for name, value in cookies_dict.items():
+        if not value:
+            raise ValueError(f"Cookie '{name}' is missing a value")
+
     options = Options()
     options.add_argument('--disable-notifications')
     options.add_argument("--start-maximized")
