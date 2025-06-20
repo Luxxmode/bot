@@ -526,6 +526,27 @@ def get_session_of_account(account: dict):
             except Exception:
                 cookies = {}
 
+        if not cookies:
+            try:
+                from account_manager import selenium_login_and_save_cookies
+
+                Terminal.yellow(
+                    f"Cookies missing for {account.get('username')}, logging in...",
+                    show=True,
+                )
+                new_cookies = selenium_login_and_save_cookies(
+                    account.get("username"), account.get("password")
+                )
+                if new_cookies:
+                    account["x_cookies_json"] = json.dumps(new_cookies)
+                    update_account(
+                        account.get("username"),
+                        {"x_cookies_json": account["x_cookies_json"]},
+                    )
+                    cookies = new_cookies
+            except Exception as e:
+                Terminal.red(f"Failed to login and create cookies: {e}", show=True)
+
         class SimpleSession:
             def __init__(self, cookies):
                 self.cookies = cookies
